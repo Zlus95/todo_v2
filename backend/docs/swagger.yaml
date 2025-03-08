@@ -20,6 +20,42 @@ info:
   title: User Registration API
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authorization
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: The user has been successfully authorized.
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Invalid Email
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User authorization
+      tags:
+      - users
   /register:
     post:
       consumes:

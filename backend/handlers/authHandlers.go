@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"backend/models"
+	"backend/utils"
 	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
 	"time"
-
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,7 +21,6 @@ func InitAuthHandlers(c *mongo.Collection) {
 	userCollection = c
 }
 
-// Register godoc
 // @Summary New user registration
 // @Description Registers a new user in the system
 // @Tags users
@@ -84,4 +83,49 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
+}
+
+// @Summary User authorization
+// @Description Authorization
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User data"
+// @Success 201 {object} map[string]string "The user has been successfully authorized."
+// @Failure 401 {object} map[string]string "Invalid Password"
+// @Failure 401 {object} map[string]string "Invalid Email"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Router /login [post]
+func Login(w http.ResponseWriter, r *http.Request) {
+	var user models.User
+
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		log.Printf("Error decoding request body: %v", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	var currentUser models.User
+	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
+	defer cancel()
+
+	if err := userCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&currentUser); err != nil {
+		if err == mongo.ErrNoDocuments {
+			log.Printf("User not found: %v", err)
+			http.Error(w, "Invalid Email", http.StatusUnauthorized)
+			return
+		}
+		log.Printf("Error finding user: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(currentUser.Password), []byte(user.Password)); err != nil {
+		log.Printf("Invalid password for user %s: %v", user.Email, err)
+		http.Error(w, "Invalid Password", http.StatusUnauthorized)
+		return
+	}
+
+	token, _ := utils.GenerateJWT(currentUser.ID.Hex())
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }

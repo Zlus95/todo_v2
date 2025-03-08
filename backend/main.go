@@ -37,7 +37,8 @@ func main() {
 
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
-	r.HandleFunc("/register", handlers.Register).Methods("Post")
+	r.HandleFunc("/register", handlers.Register).Methods("POST")
+	r.HandleFunc("/login", handlers.Login).Methods("POST")
 
 	// Настройка CORS
 	c := cors.New(cors.Options{
