@@ -34,7 +34,9 @@ func main() {
 	r := mux.NewRouter()
 	// handlers.InitTaskHandlers(tasksCollection)
 	handlers.InitAuthHandlers(userCollection)
+
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+
 	r.HandleFunc("/register", handlers.Register).Methods("Post")
 
 	// Настройка CORS
