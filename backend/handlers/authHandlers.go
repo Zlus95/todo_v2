@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
@@ -20,12 +21,38 @@ func InitAuthHandlers(c *mongo.Collection) {
 	userCollection = c
 }
 
+// Register godoc
+// @Summary New user registration
+// @Description Registers a new user in the system
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User data"
+// @Success 201 {object} map[string]string "The user has been successfully registered"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 409 {object} map[string]string "User already exists"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Router /register [post]
 func Register(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		log.Printf("Error decoding request body: %v", err)
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
+	defer cancel()
+
+	foundUser := bson.M{"email": user.Email}
+	if err := userCollection.FindOne(ctx, foundUser).Err(); err == nil {
+		log.Printf("User with email %s already exists", user.Email)
+		http.Error(w, "User already exists", http.StatusConflict)
+		return
+	} else if err != mongo.ErrNoDocuments {
+		log.Printf("Error checking user existence: %v", err)
+		http.Error(w, "Failed to check user existence", http.StatusInternalServerError)
 		return
 	}
 
@@ -48,20 +75,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.Password = string(hashedPassword)
-
-	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
-	defer cancel()
-
-	foundUser := bson.M{"email": user.Email}
-	if err := userCollection.FindOne(ctx, foundUser).Err(); err == nil {
-		log.Printf("User with email %s already exists", user.Email)
-		http.Error(w, "User already exists", http.StatusConflict)
-		return
-	} else if err != mongo.ErrNoDocuments {
-		log.Printf("Error checking user existence: %v", err)
-		http.Error(w, "Failed to check user existence", http.StatusInternalServerError)
-		return
-	}
 
 	if _, err := userCollection.InsertOne(ctx, user); err != nil {
 		log.Printf("Error inserting user: %v", err)

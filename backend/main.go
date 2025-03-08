@@ -6,12 +6,20 @@ import (
 	"log"
 	"net/http"
 
+	_ "backend/docs"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// @title User Registration API
+// @version 1.0
+// @description API для регистрации пользователей
+// @host localhost:8080
+// @BasePath /
 func main() {
 	// Подключение к MongoDB
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -26,7 +34,7 @@ func main() {
 	r := mux.NewRouter()
 	// handlers.InitTaskHandlers(tasksCollection)
 	handlers.InitAuthHandlers(userCollection)
-
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 	r.HandleFunc("/register", handlers.Register).Methods("Post")
 
 	// Настройка CORS
