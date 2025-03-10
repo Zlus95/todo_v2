@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserLogin"
                         }
                     }
                 ],
@@ -90,7 +90,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.userRegister"
                         }
                     }
                 ],
@@ -136,13 +136,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.User": {
+        "models.UserLogin": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
-                "id": {
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.userRegister": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 },
                 "lastName": {

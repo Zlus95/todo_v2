@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/handlers"
+	"backend/middleware"
 	"context"
 	"log"
 	"net/http"
@@ -38,7 +39,7 @@ func main() {
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	r.HandleFunc("/register", handlers.Register).Methods("POST")
-	r.HandleFunc("/login", handlers.Login).Methods("POST")
+	r.HandleFunc("/login", middleware.ValidLigin(handlers.Login)).Methods("POST")
 
 	// Настройка CORS
 	c := cors.New(cors.Options{

@@ -26,7 +26,7 @@ func InitAuthHandlers(c *mongo.Collection) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body models.User true "User data"
+// @Param user body models.userRegister true "User data"
 // @Success 201 {object} map[string]string "The user has been successfully registered"
 // @Failure 400 {object} map[string]string "Invalid request"
 // @Failure 409 {object} map[string]string "User already exists"
@@ -90,7 +90,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body models.User true "User data"
+// @Param user body models.UserLogin true "User data"
 // @Success 201 {object} map[string]string "The user has been successfully authorized."
 // @Failure 401 {object} map[string]string "Invalid Password"
 // @Failure 401 {object} map[string]string "Invalid Email"
@@ -98,12 +98,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 // @Router /login [post]
 func Login(w http.ResponseWriter, r *http.Request) {
 	var user models.User
-
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		log.Printf("Error decoding request body: %v", err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
 
 	var currentUser models.User
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
