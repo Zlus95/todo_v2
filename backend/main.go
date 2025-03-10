@@ -38,8 +38,8 @@ func main() {
 
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
-	r.HandleFunc("/register", handlers.Register).Methods("POST")
-	r.HandleFunc("/login", middleware.ValidLigin(handlers.Login)).Methods("POST")
+	r.HandleFunc("/register", middleware.ValidRegister(handlers.Register)).Methods("POST")
+	r.HandleFunc("/login", middleware.ValidLogin(handlers.Login)).Methods("POST")
 
 	// Настройка CORS
 	c := cors.New(cors.Options{

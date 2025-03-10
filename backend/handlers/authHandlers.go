@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,7 +25,7 @@ func InitAuthHandlers(c *mongo.Collection) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body models.userRegister true "User data"
+// @Param user body models.UserRegister true "User data"
 // @Success 201 {object} map[string]string "The user has been successfully registered"
 // @Failure 400 {object} map[string]string "Invalid request"
 // @Failure 409 {object} map[string]string "User already exists"
@@ -34,12 +33,6 @@ func InitAuthHandlers(c *mongo.Collection) {
 // @Router /register [post]
 func Register(w http.ResponseWriter, r *http.Request) {
 	var user models.User
-
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		log.Printf("Error decoding request body: %v", err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
 
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
@@ -52,16 +45,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	} else if err != mongo.ErrNoDocuments {
 		log.Printf("Error checking user existence: %v", err)
 		http.Error(w, "Failed to check user existence", http.StatusInternalServerError)
-		return
-	}
-
-	if user.Email == "" || !strings.Contains(user.Email, "@") {
-		http.Error(w, "Invalid email", http.StatusBadRequest)
-		return
-	}
-
-	if len(user.Password) < 8 {
-		http.Error(w, "Password must be at least 8 characters", http.StatusBadRequest)
 		return
 	}
 
