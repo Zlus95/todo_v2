@@ -80,13 +80,18 @@ func Register(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} map[string]string "Internal Server Error"
 // @Router /login [post]
 func Login(w http.ResponseWriter, r *http.Request) {
-	var user models.User
+	userLogin, ok := r.Context().Value("user").(models.UserLogin)
 
+	if !ok {
+		log.Printf("Error getting user from context")
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 	var currentUser models.User
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
 
-	if err := userCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&currentUser); err != nil {
+	if err := userCollection.FindOne(ctx, bson.M{"email": userLogin.Email}).Decode(&currentUser); err != nil {
 		if err == mongo.ErrNoDocuments {
 			log.Printf("User not found: %v", err)
 			http.Error(w, "Invalid Email", http.StatusUnauthorized)
@@ -97,8 +102,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(currentUser.Password), []byte(user.Password)); err != nil {
-		log.Printf("Invalid password for user %s: %v", user.Email, err)
+	if err := bcrypt.CompareHashAndPassword([]byte(currentUser.Password), []byte(userLogin.Password)); err != nil {
+		log.Printf("Invalid password for user %s: %v", userLogin.Email, err)
 		http.Error(w, "Invalid Password", http.StatusUnauthorized)
 		return
 	}
