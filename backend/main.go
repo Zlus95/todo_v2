@@ -44,6 +44,11 @@ func main() {
 	r.HandleFunc("/register", middleware.ValidRegister(handlers.Register)).Methods("POST")
 	r.HandleFunc("/login", middleware.ValidLogin(handlers.Login)).Methods("POST")
 	r.Handle("/tasks", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetTasks))).Methods("GET")
+	r.Handle("/task", middleware.AuthMiddleware(
+		middleware.ValidTask(
+			http.HandlerFunc(handlers.CreateTask),
+		),
+	)).Methods("POST")
 
 	// Настройка CORS
 	c := cors.New(cors.Options{

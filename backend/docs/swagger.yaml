@@ -1,5 +1,16 @@
 basePath: /
 definitions:
+  models.Task:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
   models.UserLogin:
     properties:
       email:
@@ -103,6 +114,36 @@ paths:
       summary: New user registration
       tags:
       - users
+  /task:
+    post:
+      consumes:
+      - application/json
+      description: Create task
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список задач
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - tasks
   /tasks:
     get:
       consumes:

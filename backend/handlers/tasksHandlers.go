@@ -63,5 +63,44 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(tasks)
+}
 
+// @SummaryGet Create task
+// @Description Create task
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param user body models.Task true "User data"
+// @Success 200 {object} map[string]interface{} "Список задач"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Router /task [post]
+func CreateTask(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
+	task := r.Context().Value(middleware.ContextTaskKey).(models.Task)
+
+	if !ok || userID == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	objID, err := primitive.ObjectIDFromHex(userID)
+
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	task.UserID = objID
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if _, err := taskCollection.InsertOne(ctx, task); err != nil {
+		http.Error(w, "Failed to create task", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(task)
 }
