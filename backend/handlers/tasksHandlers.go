@@ -20,7 +20,7 @@ func InitTaskHandlers(c *mongo.Collection) {
 	taskCollection = c
 }
 
-// @SummaryGet users tasks
+// @Summary Get users tasks
 // @Description get all user tasks
 // @Tags tasks
 // @Accept json
@@ -70,7 +70,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(tasks)
 }
 
-// @SummaryGet Create task
+// @Summary Create task
 // @Description Create task
 // @Tags tasks
 // @Accept json
@@ -117,7 +117,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// @SummaryGet Update task
+// @Summary Update task
 // @Description Update task
 // @Tags tasks
 // @Accept json
@@ -171,7 +171,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// @SummaryGet Delete task
+// @Summary Delete task
 // @Description Delete task
 // @Tags tasks
 // @Accept json

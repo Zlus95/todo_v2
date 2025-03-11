@@ -145,6 +145,7 @@
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Create task",
                 "parameters": [
                     {
                         "description": "User data",
@@ -202,6 +203,7 @@
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Delete task",
                 "parameters": [
                     {
                         "type": "string",
@@ -255,6 +257,7 @@
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Update task",
                 "parameters": [
                     {
                         "description": "User data",
@@ -319,6 +322,7 @@
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Get users tasks",
                 "responses": {
                     "200": {
                         "description": "Список задач",

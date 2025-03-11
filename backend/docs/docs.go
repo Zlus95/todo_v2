@@ -151,6 +151,7 @@ const docTemplate = `{
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Create task",
                 "parameters": [
                     {
                         "description": "User data",
@@ -208,6 +209,7 @@ const docTemplate = `{
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Delete task",
                 "parameters": [
                     {
                         "type": "string",
@@ -261,6 +263,7 @@ const docTemplate = `{
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Update task",
                 "parameters": [
                     {
                         "description": "User data",
@@ -325,6 +328,7 @@ const docTemplate = `{
                 "tags": [
                     "tasks"
                 ],
+                "summary": "Get users tasks",
                 "responses": {
                     "200": {
                         "description": "Список задач",

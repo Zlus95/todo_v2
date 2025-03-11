@@ -151,6 +151,7 @@ paths:
             type: object
       security:
       - ApiKeyAuth: []
+      summary: Create task
       tags:
       - tasks
   /task/{id}:
@@ -186,6 +187,7 @@ paths:
             type: object
       security:
       - ApiKeyAuth: []
+      summary: Delete task
       tags:
       - tasks
     patch:
@@ -226,6 +228,7 @@ paths:
             type: object
       security:
       - ApiKeyAuth: []
+      summary: Update task
       tags:
       - tasks
   /tasks:
@@ -249,6 +252,7 @@ paths:
             type: object
       security:
       - ApiKeyAuth: []
+      summary: Get users tasks
       tags:
       - tasks
 securityDefinitions:
