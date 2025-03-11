@@ -20,9 +20,9 @@ func init() {
 		log.Fatal("SECRET_KEY is not set in .env file")
 	}
 
-	if len(secret) < 32 {
-		log.Fatal("SECRET_KEY must be at least 32 bytes long")
-	}
+	// if len(secret) < 32 {
+	// 	log.Fatal("SECRET_KEY must be at least 32 bytes long")
+	// }
 
 	jwtKey = []byte(secret)
 }

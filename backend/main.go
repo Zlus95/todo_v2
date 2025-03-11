@@ -16,11 +16,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// @title User Registration API
+// @title Swagger Example API
 // @version 1.0
-// @description API для регистрации пользователей
+// @description This is a sample server.
 // @host localhost:8080
 // @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	// Подключение к MongoDB
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -28,18 +31,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// tasksCollection := client.Database("todolist").Collection("tasks")
+	tasksCollection := client.Database("todolist").Collection("tasks")
 	userCollection := client.Database("todolist").Collection("users")
 
 	// Инициализация маршрутизатора
 	r := mux.NewRouter()
-	// handlers.InitTaskHandlers(tasksCollection)
+	handlers.InitTaskHandlers(tasksCollection)
 	handlers.InitAuthHandlers(userCollection)
 
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	r.HandleFunc("/register", middleware.ValidRegister(handlers.Register)).Methods("POST")
 	r.HandleFunc("/login", middleware.ValidLogin(handlers.Login)).Methods("POST")
+	r.Handle("/tasks", middleware.AuthMiddleware(http.HandlerFunc(handlers.GetTasks))).Methods("GET")
 
 	// Настройка CORS
 	c := cors.New(cors.Options{

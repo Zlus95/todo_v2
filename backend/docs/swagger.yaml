@@ -7,7 +7,7 @@ definitions:
       password:
         type: string
     type: object
-  models.userRegister:
+  models.UserRegister:
     properties:
       email:
         type: string
@@ -21,8 +21,8 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: API для регистрации пользователей
-  title: User Registration API
+  description: This is a sample server.
+  title: Swagger Example API
   version: "1.0"
 paths:
   /login:
@@ -72,7 +72,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.userRegister'
+          $ref: '#/definitions/models.UserRegister'
       produces:
       - application/json
       responses:
@@ -103,4 +103,32 @@ paths:
       summary: New user registration
       tags:
       - users
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: get all user tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список задач
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - tasks
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
