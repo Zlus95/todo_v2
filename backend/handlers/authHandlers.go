@@ -32,14 +32,20 @@ func InitAuthHandlers(c *mongo.Collection) {
 // @Failure 500 {object} map[string]string "Internal Server Error"
 // @Router /register [post]
 func Register(w http.ResponseWriter, r *http.Request) {
-	var user models.User
+	userReg, ok := r.Context().Value("user").(models.UserRegister)
+
+	if !ok {
+		log.Printf("Error getting user from context")
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
 
-	foundUser := bson.M{"email": user.Email}
+	foundUser := bson.M{"email": userReg.Email}
 	if err := userCollection.FindOne(ctx, foundUser).Err(); err == nil {
-		log.Printf("User with email %s already exists", user.Email)
+		log.Printf("User with email %s already exists", userReg.Email)
 		http.Error(w, "User already exists", http.StatusConflict)
 		return
 	} else if err != mongo.ErrNoDocuments {
@@ -48,7 +54,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReg.Password), bcrypt.DefaultCost)
 
 	if err != nil {
 		log.Printf("Error hashing password: %v", err)
@@ -56,9 +62,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Password = string(hashedPassword)
+	userReg.Password = string(hashedPassword)
 
-	if _, err := userCollection.InsertOne(ctx, user); err != nil {
+	if _, err := userCollection.InsertOne(ctx, userReg); err != nil {
 		log.Printf("Error inserting user: %v", err)
 		http.Error(w, "Failed to register user", http.StatusInternalServerError)
 		return
