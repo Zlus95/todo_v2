@@ -49,7 +49,7 @@ func main() {
 			http.HandlerFunc(handlers.CreateTask),
 		),
 	)).Methods("POST")
-	r.Handle("/tasks/{id}", middleware.AuthMiddleware(
+	r.Handle("/task/{id}", middleware.AuthMiddleware(
 		middleware.ValidTask(
 			http.HandlerFunc(handlers.UpdateTask),
 		),

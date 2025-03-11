@@ -6,13 +6,9 @@ definitions:
         type: string
       title:
         type: string
-      user_id:
-        type: string
     type: object
   models.UpdateTask:
     properties:
-      id:
-        type: string
       status:
         type: string
       title:
@@ -157,30 +153,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - tasks
-  /tasks:
-    get:
-      consumes:
-      - application/json
-      description: get all user tasks
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Список задач
-          schema:
-            additionalProperties: true
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - tasks
-  /tasks/{id}:
+  /task/{id}:
     patch:
       consumes:
       - application/json
@@ -192,6 +165,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.UpdateTask'
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -208,6 +186,29 @@ paths:
             type: object
         "500":
           description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - tasks
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: get all user tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список задач
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
           schema:
             additionalProperties:
               type: string

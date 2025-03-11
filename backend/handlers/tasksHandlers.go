@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -54,12 +55,16 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	}
 	defer cursor.Close(ctx)
 
-	var tasks []models.Task
+	var tasks []models.TaskResponse
 
 	for cursor.Next(ctx) {
 		var task models.Task
 		cursor.Decode(&task)
-		tasks = append(tasks, task)
+		tasks = append(tasks, models.TaskResponse{
+			ID:     task.ID,
+			Title:  task.Title,
+			Status: task.Status,
+		})
 	}
 
 	json.NewEncoder(w).Encode(tasks)
@@ -102,8 +107,14 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := models.TaskResponse{
+		ID:     task.ID,
+		Title:  task.Title,
+		Status: task.Status,
+	}
+
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(task)
+	json.NewEncoder(w).Encode(response)
 }
 
 // @SummaryGet Update task
@@ -113,11 +124,20 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Param user body models.UpdateTask true "User data"
+// @Param id path string true "Task ID"
 // @Success 200 {object} map[string]interface{} "successfully"
 // @Failure 401 {object} map[string]string "Unauthorized"
 // @Failure 500 {object} map[string]string "Internal Server Error"
-// @Router /tasks/{id} [patch]
+// @Router /task/{id} [patch]
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	taskID := vars["id"]
+
+	objTaskID, err := primitive.ObjectIDFromHex(taskID)
+	if err != nil {
+		http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		return
+	}
 	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
 	task := r.Context().Value(middleware.ContextTaskKey).(models.Task)
 
@@ -138,10 +158,16 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	if _, err := taskCollection.UpdateOne(ctx, bson.M{"_id": task.ID}, bson.M{"$set": task}); err != nil {
+	if _, err := taskCollection.UpdateOne(ctx, bson.M{"_id": objTaskID}, bson.M{"$set": task}); err != nil {
 		http.Error(w, "Failed to update task", http.StatusInternalServerError)
 		return
 	}
 
-	json.NewEncoder(w).Encode(task)
+	response := models.UpdateTask{
+		// ID:     task.ID,
+		Title:  task.Title,
+		Status: task.Status,
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
