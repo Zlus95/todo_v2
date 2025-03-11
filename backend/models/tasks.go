@@ -8,3 +8,9 @@ type Task struct {
 	Title  string             `json:"title" bson:"title"`
 	Status string             `json:"status" bson:"status"`
 }
+
+type CreateTask struct {
+	UserID primitive.ObjectID `json:"user_id" bson:"user_id"`
+	Title  string             `json:"title" bson:"title"`
+	Status string             `json:"status" bson:"status"`
+}

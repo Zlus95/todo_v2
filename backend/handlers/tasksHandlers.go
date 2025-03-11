@@ -71,7 +71,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param user body models.Task true "User data"
+// @Param user body models.CreateTask true "User data"
 // @Success 200 {object} map[string]interface{} "Список задач"
 // @Failure 401 {object} map[string]string "Unauthorized"
 // @Router /task [post]

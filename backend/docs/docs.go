@@ -158,7 +158,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Task"
+                            "$ref": "#/definitions/models.CreateTask"
                         }
                     }
                 ],
@@ -221,12 +221,9 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Task": {
+        "models.CreateTask": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
                 "status": {
                     "type": "string"
                 },

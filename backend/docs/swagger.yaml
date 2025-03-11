@@ -1,9 +1,7 @@
 basePath: /
 definitions:
-  models.Task:
+  models.CreateTask:
     properties:
-      id:
-        type: string
       status:
         type: string
       title:
@@ -125,7 +123,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.Task'
+          $ref: '#/definitions/models.CreateTask'
       produces:
       - application/json
       responses:

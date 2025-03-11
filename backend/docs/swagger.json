@@ -152,7 +152,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Task"
+                            "$ref": "#/definitions/models.CreateTask"
                         }
                     }
                 ],
@@ -215,12 +215,9 @@
         }
     },
     "definitions": {
-        "models.Task": {
+        "models.CreateTask": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
                 "status": {
                     "type": "string"
                 },
