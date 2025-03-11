@@ -54,6 +54,7 @@ func main() {
 			http.HandlerFunc(handlers.UpdateTask),
 		),
 	)).Methods("PATCH")
+	r.Handle("/task/{id}", middleware.AuthMiddleware(http.HandlerFunc(handlers.DeleteTask))).Methods("DELETE")
 
 	// Настройка CORS
 	c := cors.New(cors.Options{

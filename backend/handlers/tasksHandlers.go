@@ -164,10 +164,61 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := models.UpdateTask{
-		// ID:     task.ID,
 		Title:  task.Title,
 		Status: task.Status,
 	}
 
 	json.NewEncoder(w).Encode(response)
+}
+
+// @SummaryGet Delete task
+// @Description Delete task
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path string true "Task ID"
+// @Success 200 {object} map[string]interface{} "successfully"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Router /task/{id} [delete]
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	taskID := vars["id"]
+
+	objTaskID, err := primitive.ObjectIDFromHex(taskID)
+	if err != nil {
+		http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		return
+	}
+
+	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
+
+	if !ok || userID == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	objUserID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	result, err := taskCollection.DeleteOne(ctx, bson.M{"_id": objTaskID, "user_id": objUserID})
+	if err != nil {
+		http.Error(w, "Failed to delete task", http.StatusInternalServerError)
+		return
+	}
+
+	if result.DeletedCount == 0 {
+		http.Error(w, "Task not found", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Task deleted successfully"})
 }
