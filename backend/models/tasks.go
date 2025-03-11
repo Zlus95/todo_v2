@@ -14,3 +14,9 @@ type CreateTask struct {
 	Title  string             `json:"title" bson:"title"`
 	Status string             `json:"status" bson:"status"`
 }
+
+type UpdateTask struct {
+	Title  string             `json:"title" bson:"title"`
+	Status string             `json:"status" bson:"status"`
+	ID     primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+}

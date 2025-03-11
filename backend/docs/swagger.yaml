@@ -9,6 +9,15 @@ definitions:
       user_id:
         type: string
     type: object
+  models.UpdateTask:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+    type: object
   models.UserLogin:
     properties:
       email:
@@ -128,12 +137,18 @@ paths:
       - application/json
       responses:
         "200":
-          description: Список задач
+          description: successfully
           schema:
             additionalProperties: true
             type: object
         "401":
           description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
@@ -157,6 +172,42 @@ paths:
             type: object
         "401":
           description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - tasks
+  /tasks/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update task
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string

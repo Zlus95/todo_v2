@@ -49,6 +49,11 @@ func main() {
 			http.HandlerFunc(handlers.CreateTask),
 		),
 	)).Methods("POST")
+	r.Handle("/tasks/{id}", middleware.AuthMiddleware(
+		middleware.ValidTask(
+			http.HandlerFunc(handlers.UpdateTask),
+		),
+	)).Methods("PATCH")
 
 	// Настройка CORS
 	c := cors.New(cors.Options{
