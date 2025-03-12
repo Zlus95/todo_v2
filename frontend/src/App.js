@@ -1,8 +1,9 @@
 import React from "react";
 import "./index.css";
+import Navigation from "./Navigation/Navigation";
 
 function App() {
-  return <div className="text-red-500">ывывывыв</div>;
+  return <Navigation />;
 }
 
 export default App;
