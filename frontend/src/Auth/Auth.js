@@ -5,7 +5,6 @@ import { useMutation } from "@tanstack/react-query";
 
 async function login(user) {
   const { data } = await api.post("/login", user);
-  console.log(data, user);
   localStorage.setItem("token", data.token);
   return data;
 }
@@ -25,7 +24,7 @@ const Auth = () => {
   const mutationLogin = useMutation({
     mutationFn: login,
     onSuccess: () => navigate("/"),
-    // onError: (err) => console.log(err),
+    onError: ({ response }) => alert(response.data),
   });
 
   const handlerSubmit = (event) => {
