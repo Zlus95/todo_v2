@@ -3,6 +3,7 @@ import { Header } from "../Header/Header";
 import AddTodo from "./AddTodo";
 import { useQuery } from "@tanstack/react-query";
 import api from "../api";
+import Todo from "./Todo";
 
 function useGetTodos() {
   return useQuery({
@@ -45,6 +46,16 @@ const TodoPage = () => {
         <Header />
         <div className="flex justify-center mt-6">
           <AddTodo />
+        </div>
+        <div className="flex justify-center flex-col gap-4 items-center mt-6">
+          {(todo.data || []).map((item) => (
+            <div
+              key={item.id}
+              className="w-64 border-2 border-orange-300 flex justify-between p-2 rounded"
+            >
+              <Todo todo={todo} {...item} />
+            </div>
+          ))}
         </div>
       </div>
     </>
