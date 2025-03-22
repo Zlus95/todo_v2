@@ -48,7 +48,7 @@ const TodoPage = () => {
         <div className="flex justify-center mt-6">
           <AddTodo />
         </div>
-        <div className="flex justify-center flex-col gap-4 items-center mt-6 h-96 overflow-y-scroll">
+        <div className="flex justify-center flex-col gap-4 items-center mt-6">
           {(todo.data || []).map((item) => (
             <div
               key={item.id}

@@ -12,14 +12,14 @@ async function updateStatus(id, todo) {
 }
 
 async function deleteTask(id) {
-  const { data } = await api.delete(`/tasks/${id}`);
+  const { data } = await api.delete(`/task/${id}`);
   return data;
 }
 
 const Todo = (props) => {
   const queryClient = useQueryClient();
   const { title, id, todo, status } = props;
-  
+
   const mutationUpdate = useMutation({
     mutationFn: (id) => updateStatus(id, todo.data),
     onSuccess: () => queryClient.invalidateQueries(["todoList"]),
@@ -51,9 +51,11 @@ const Todo = (props) => {
   return (
     <>
       {title}
-      <div>
+      <div className="flex gap-2">
         <button onClick={update}>{status}</button>
-        <button onClick={() => deleteCallBack(id)}>x</button>
+        <button className="text-red-500" onClick={() => deleteCallBack(id)}>
+          x
+        </button>
       </div>
     </>
   );
