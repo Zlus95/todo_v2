@@ -26,7 +26,7 @@ const AddTodo = () => {
     event.preventDefault();
     if (valueRef.current) {
       const value = valueRef.current.value;
-      mutation.mutate({ title: value, done: false });
+      mutation.mutate({ title: value, status: "to do" });
       valueRef.current.value = "";
     }
   };

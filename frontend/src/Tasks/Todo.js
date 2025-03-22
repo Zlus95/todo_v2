@@ -1,12 +1,12 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
+import { Edit } from "../modals/Edit";
 
-async function updateStatus(id, todo) {
-  const task = await todo.find((item) => item.id === id);
-  const { data } = await api.patch(`/tasks/${id}`, {
-    ...task,
-    done: !task.done,
+async function updateStatus(id, title, status) {
+  const { data } = await api.patch(`/task/${id}`, {
+    title: title,
+    status: status,
   });
   return data;
 }
@@ -18,21 +18,25 @@ async function deleteTask(id) {
 
 const Todo = (props) => {
   const queryClient = useQueryClient();
-  const { title, id, todo, status } = props;
+  const { title, id, status } = props;
+  const [editModal, setEditModal] = useState(false);
 
   const mutationUpdate = useMutation({
-    mutationFn: (id) => updateStatus(id, todo.data),
+    mutationFn: ({ id, title, status }) => updateStatus(id, title, status),
     onSuccess: () => queryClient.invalidateQueries(["todoList"]),
   });
 
-  const update = useCallback(async () => {
-    try {
-      await mutationUpdate.mutateAsync(id);
-    } catch (error) {
-      console.error("error", error);
-      alert("Failed to update task status. Please try again");
-    }
-  }, [id, mutationUpdate]);
+  const update = useCallback(
+    async (id, title, status) => {
+      try {
+        await mutationUpdate.mutateAsync({ id, title, status });
+      } catch (error) {
+        console.error("error", error);
+        alert("Failed to update task status. Please try again");
+      }
+    },
+    [mutationUpdate]
+  );
 
   const mutationDelete = useMutation({
     mutationFn: (id) => deleteTask(id),
@@ -52,11 +56,19 @@ const Todo = (props) => {
     <>
       {title}
       <div className="flex gap-2">
-        <button onClick={update}>{status}</button>
+        <button onClick={() => setEditModal(true)}>{status}</button>
         <button className="text-red-500" onClick={() => deleteCallBack(id)}>
           x
         </button>
       </div>
+      <Edit
+        isOpen={editModal}
+        onClose={() => setEditModal(false)}
+        update={update}
+        status={status}
+        id={id}
+        title={title}
+      />
     </>
   );
 };
