@@ -2,6 +2,7 @@ import React, { memo, useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
 import { Edit } from "../modals/Edit";
+import { Delete } from "../modals/Delete";
 
 async function updateStatus(id, title, status) {
   const { data } = await api.patch(`/task/${id}`, {
@@ -26,6 +27,7 @@ const Todo = (props) => {
   const queryClient = useQueryClient();
   const { title, id, status } = props;
   const [editModal, setEditModal] = useState(false);
+  const [deletetModal, setDeleteModal] = useState(false);
 
   const mutationUpdate = useMutation({
     mutationFn: ({ id, title, status }) => updateStatus(id, title, status),
@@ -45,18 +47,21 @@ const Todo = (props) => {
   );
 
   const mutationDelete = useMutation({
-    mutationFn: (id) => deleteTask(id),
+    mutationFn: ({ id }) => deleteTask(id),
     onSuccess: () => queryClient.invalidateQueries(["todoList"]),
   });
 
-  const deleteCallBack = useCallback(async () => {
-    try {
-      await mutationDelete.mutateAsync(id);
-    } catch (error) {
-      console.error("error", error);
-      alert("Failed to delete task Please try again");
-    }
-  }, [id, mutationDelete]);
+  const deleteCallBack = useCallback(
+    async (id) => {
+      try {
+        await mutationDelete.mutateAsync({ id });
+      } catch (error) {
+        console.error("error", error);
+        alert("Failed to delete task Please try again");
+      }
+    },
+    [mutationDelete]
+  );
 
   return (
     <>
@@ -68,7 +73,7 @@ const Todo = (props) => {
         >
           {status}
         </button>
-        <button className="text-red-500" onClick={() => deleteCallBack(id)}>
+        <button className="text-red-500" onClick={() => setDeleteModal(true)}>
           x
         </button>
       </div>
@@ -79,6 +84,12 @@ const Todo = (props) => {
         status={status}
         id={id}
         title={title}
+      />
+      <Delete
+        isOpen={deletetModal}
+        onClose={() => setDeleteModal(false)}
+        id={id}
+        deleteCallBack={deleteCallBack}
       />
     </>
   );
