@@ -51,16 +51,9 @@ const Todo = (props) => {
   return (
     <>
       {title}
-      <div className="TodoButtons">
-        <button
-          className={done ? "text-lg StatusDone" : "text-lg StatusDoing"}
-          onClick={update}
-        >
-          {done ? "done" : "doing"}
-        </button>
-        <button className="DeleteButton" onClick={() => deleteCallBack(id)}>
-          x
-        </button>
+      <div>
+        <button onClick={update}>{done ? "done" : "doing"}</button>
+        <button onClick={() => deleteCallBack(id)}>x</button>
       </div>
     </>
   );
