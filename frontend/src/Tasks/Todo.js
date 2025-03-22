@@ -16,6 +16,12 @@ async function deleteTask(id) {
   return data;
 }
 
+const styleStatus = {
+  "to do": "text-primary",
+  doing: "text-green-500",
+  done: "text-stone-500",
+};
+
 const Todo = (props) => {
   const queryClient = useQueryClient();
   const { title, id, status } = props;
@@ -56,7 +62,12 @@ const Todo = (props) => {
     <>
       {title}
       <div className="flex gap-2">
-        <button onClick={() => setEditModal(true)}>{status}</button>
+        <button
+          onClick={() => setEditModal(true)}
+          className={styleStatus[status]}
+        >
+          {status}
+        </button>
         <button className="text-red-500" onClick={() => deleteCallBack(id)}>
           x
         </button>
