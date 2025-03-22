@@ -18,8 +18,8 @@ async function deleteTask(id) {
 
 const Todo = (props) => {
   const queryClient = useQueryClient();
-  const { title, id, done, todo } = props;
-
+  const { title, id, todo, status } = props;
+  
   const mutationUpdate = useMutation({
     mutationFn: (id) => updateStatus(id, todo.data),
     onSuccess: () => queryClient.invalidateQueries(["todoList"]),
@@ -52,7 +52,7 @@ const Todo = (props) => {
     <>
       {title}
       <div>
-        <button onClick={update}>{done ? "done" : "doing"}</button>
+        <button onClick={update}>{status}</button>
         <button onClick={() => deleteCallBack(id)}>x</button>
       </div>
     </>

@@ -18,6 +18,7 @@ function useGetTodos() {
 const TodoPage = () => {
   const [todo, setTodo] = useState([]);
   const { isLoading, data, error, isError, isSuccess } = useGetTodos();
+
   useEffect(() => {
     if (isSuccess) {
       setTodo(data);
