@@ -1,20 +1,15 @@
-import React, { useState } from "react";
-import { LogOut } from "../modals/LogOut";
+import React from "react";
+import { Header } from "../Header/Header";
 
 const TodoPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <>
       <div className="h-full w-full">
-        <div
-          className="flex justify-end pr-2 pt-2 text-primary cursor-pointer"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Log out
+        <Header />
+        <div className="flex justify-center mt-6">
+          <input />
         </div>
       </div>
-      <LogOut isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 };
