@@ -2,6 +2,11 @@
 
 A simple Tudu sheet application with authorization and registration
 
+User can:
+* Create the task
+* Edit status of the task(to do/doing/done)
+* Delete the task
+
 ## Core Technologies
 
 ### Backend
